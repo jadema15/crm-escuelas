@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Alumno;
 use Illuminate\Http\Request;
 use App\Models\Escuela;
+use App\Contracts\iEdad;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
-class AlumnoController extends Controller
+class AlumnoController extends Controller  implements iEdad
 {
     /**
      * Display a listing of the resource.
@@ -90,7 +92,8 @@ class AlumnoController extends Controller
     public function edit($id)
     {
         $alumno = Alumno::find($id);
-        return view('alumno/edit', compact('alumno',$alumno));
+        $edad = self::calcularEdad($alumno->fecha_nacimiento);
+        return view('alumno/edit', compact('alumno',$alumno, 'edad', $edad));
     }
 
     /**
@@ -120,8 +123,7 @@ class AlumnoController extends Controller
             $alumno->save();
         return redirect()->route('alumnos.index')->with('success', 'Alumno registrado con éxito');
         } catch (\Throwable $th) {
-            dd($th);
-            return redirect()->route('alumnos.index')->with('error', 'Error al registrar');
+           return redirect()->route('alumnos.index')->with('error', 'Error al registrar');
         }      
     }
 
@@ -141,4 +143,10 @@ class AlumnoController extends Controller
             return redirect()->route('alumnos.index')->with('error', 'No se encontró la alumno');
         }
     }
+
+    public function calcularEdad($fechaNacimiento)    {      
+        $fecha = Carbon::parse($fechaNacimiento); 
+        return $fecha->age;
+    }
+
 }

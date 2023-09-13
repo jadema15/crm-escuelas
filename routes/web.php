@@ -27,3 +27,5 @@ Route::resource('escuelas', EscuelaController::class);
 Route::resource('alumnos', AlumnoController::class);
 
 Route::get('/listado-escuelas', [App\Http\Controllers\EscuelaController::class, 'listadoEscuelas']);
+
+Route::get('/html', [App\Http\Controllers\EscuelaController::class, 'generateHtml']);

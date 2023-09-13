@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Escuela;
+use App\Contracts\iTemplate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -42,34 +43,33 @@ class EscuelaController extends Controller
             'direccion_web.url' => 'La dirección web no es válida.',
         ];     
 
-        $validar = Validator::make($request->all(), [
+         $validar = Validator::make($request->all(), [
             'nombre' => 'required',
             'direccion' => 'required',
-            'correo'    => 'required|email|unique:Escuelas',
+            'correo'    => 'required|email|unique:Escuelas',          
             'logotipo' => 'image|max:2048',
             'pagina_web' => 'nullable|url'
         ], $messages);    
 
-        if ($validar->fails()) {
+         if ($validar->fails()) {
             return redirect()
                 ->route('escuelas.create') 
                 ->withErrors($validar)
                 ->withInput();
-        }
-        
+        } 
         $escuela->nombre  = $request->nombre;
         $escuela->direccion = $request->direccion;
         $escuela->logotipo = $request->logotipo;
         $escuela->correo  = $request->correo;
         $escuela->telefono = $request->telefono;
-        $escuela->pagina_web = $request->pagina_web;      
+        $escuela->pagina_web = $request->pagina_web;     
 
         if ($request->hasFile('logotipo')) {
             $logotipo = $request->file('logotipo');
-            $logotipoNombre = time() . '.' . $logotipo->getClientOriginalExtension();
+            $logotipoNombre = $logotipo->getClientOriginalName();
             $logotipo->move(public_path('store/logos'), $logotipoNombre);
             $escuela->logotipo = $logotipoNombre;
-        }
+        } 
       
         try {
             $escuela->save();
@@ -164,6 +164,11 @@ class EscuelaController extends Controller
     public function listadoEscuelas()
     {
       return  Escuela::all();
+    }
+
+    public function generateHtml(iTemplate $template)   {            
+        $html = $template->getHtml('hola a todos desde la interfaz');
+        return $html;     
     }
     
 }

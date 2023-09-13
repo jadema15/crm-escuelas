@@ -51,7 +51,10 @@
                     </div>
                 </div>
                 <div class="col">    
-                
+                <div class="mb-6">
+                        <label for="exampleInputPassword1" class="form-label">Edad</label>
+                        <input type="text" class="form-control" value="{{ $edad }}">
+                    </div>
                 </div>
             </div>      
 
